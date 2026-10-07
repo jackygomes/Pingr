@@ -13,8 +13,8 @@ function RootStack() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="login" options={{ headerShown: true, title: '', headerTransparent: true }} />
-        <Stack.Screen name="register" options={{ headerShown: true, title: '', headerTransparent: true }} />
+        <Stack.Screen name="login" options={{ animation: 'fade' }} />
+        <Stack.Screen name="register" options={{ animation: 'fade' }} />
       </Stack.Protected>
       <Stack.Protected guard={signedIn}>
         <Stack.Screen name="circles" />

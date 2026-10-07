@@ -1,12 +1,12 @@
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
+import { AuthField } from '@/components/auth/auth-field';
+import { Checkbox, FooterLink, SocialSignIn } from '@/components/auth/auth-extras';
+import { AuthShell } from '@/components/auth/auth-shell';
 import { Button } from '@/components/button';
-import { Screen } from '@/components/screen';
-import { TextField } from '@/components/text-field';
-import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { Brand, Spacing } from '@/constants/theme';
 import { useAuth } from '@/lib/auth/auth-context';
 import { validateEmail } from '@/lib/auth/validation';
 
@@ -14,6 +14,7 @@ export default function LoginScreen() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string>();
@@ -37,51 +38,54 @@ export default function LoginScreen() {
   }
 
   return (
-    <Screen>
-      <ThemedText type="subtitle">Welcome back</ThemedText>
+    <AuthShell title="Sign in to your account">
+      <AuthField
+        icon="mail-outline"
+        placeholder="Enter your email"
+        value={email}
+        onChangeText={setEmail}
+        error={emailError}
+        autoCapitalize="none"
+        autoComplete="email"
+        keyboardType="email-address"
+        textContentType="emailAddress"
+      />
+      <AuthField
+        icon="lock-closed-outline"
+        placeholder="Enter your password"
+        value={password}
+        onChangeText={setPassword}
+        error={passwordError}
+        secureTextEntry
+        autoComplete="current-password"
+        textContentType="password"
+        onSubmitEditing={onSubmit}
+      />
 
-      <View style={styles.form}>
-        <TextField
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          error={emailError}
-          autoCapitalize="none"
-          autoComplete="email"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-        />
-        <TextField
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          error={passwordError}
-          secureTextEntry
-          autoComplete="current-password"
-          textContentType="password"
-          onSubmitEditing={onSubmit}
-        />
-        {formError ? (
-          <ThemedText type="small" themeColor="danger">
-            {formError}
-          </ThemedText>
-        ) : null}
-        <Button title="Log in" onPress={onSubmit} loading={loading} />
+      <View style={styles.row}>
+        <Checkbox checked={remember} onToggle={() => setRemember((r) => !r)}>
+          Remember me
+        </Checkbox>
+        <Text
+          accessibilityRole="link"
+          style={styles.forgot}
+          onPress={() => Alert.alert('Coming soon', 'Password reset will be added with Firebase.')}>
+          Forgot password?
+        </Text>
       </View>
 
-      <View style={styles.footer}>
-        <ThemedText type="small" themeColor="textSecondary">
-          New to Pingr?
-        </ThemedText>
-        <Link href="/register" replace>
-          <ThemedText type="linkPrimary">Create account</ThemedText>
-        </Link>
-      </View>
-    </Screen>
+      {formError ? <Text style={styles.formError}>{formError}</Text> : null}
+      <Button title="Sign in" onPress={onSubmit} loading={loading} style={styles.cta} />
+
+      <SocialSignIn verb="sign in" />
+      <FooterLink text="Don't have an account?" action="Sign up" onPress={() => router.replace('/register')} />
+    </AuthShell>
   );
 }
 
 const styles = StyleSheet.create({
-  form: { gap: Spacing.three, marginTop: Spacing.three },
-  footer: { flexDirection: 'row', justifyContent: 'center', gap: Spacing.one, alignItems: 'center' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  forgot: { color: Brand.accent, fontSize: 14, fontWeight: '600' },
+  formError: { color: Brand.danger, fontSize: 13, textAlign: 'center' },
+  cta: { backgroundColor: Brand.accent, marginTop: Spacing.one },
 });

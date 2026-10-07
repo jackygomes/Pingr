@@ -67,3 +67,15 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+/** Fixed dark palette for the welcome / auth flow (ignores system theme). */
+export const Brand = {
+  accent: '#FF5A4F',
+  bg: '#070910',
+  sheet: '#11141D',
+  field: '#1B1F2B',
+  border: '#2A2F3D',
+  text: '#FFFFFF',
+  muted: '#A3A8B5',
+  danger: '#FF8A80',
+} as const;
