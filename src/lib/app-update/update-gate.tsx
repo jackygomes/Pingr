@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import * as Updates from 'expo-updates';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -76,12 +77,13 @@ function Banner({ text, action, onPress }: { text: string; action: string; onPre
 export function UpdateGate({ children }: { children: ReactNode }) {
   const { policy, status } = useVersionPolicy();
   const ota = useOtaUpdate();
+  const theme = useTheme();
 
   if (status === 'required') {
     return (
       <Screen>
         <View style={styles.blocker}>
-          <ThemedText style={styles.emoji}>⬆️</ThemedText>
+          <Ionicons name="arrow-up-circle" size={72} color={theme.primary} />
           <ThemedText type="subtitle" style={styles.center}>
             Update required
           </ThemedText>
@@ -109,7 +111,6 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   blocker: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.two },
-  emoji: { fontSize: 64, lineHeight: 80 },
   center: { textAlign: 'center' },
   banner: {
     flexDirection: 'row',

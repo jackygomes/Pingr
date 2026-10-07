@@ -1,5 +1,6 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { UpdateGate } from '@/lib/app-update/update-gate';
 import { AuthProvider, useAuth } from '@/lib/auth/auth-context';
@@ -25,12 +26,14 @@ function RootStack() {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <UpdateGate>
-        <AuthProvider>
-          <RootStack />
-        </AuthProvider>
-      </UpdateGate>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <UpdateGate>
+          <AuthProvider>
+            <RootStack />
+          </AuthProvider>
+        </UpdateGate>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

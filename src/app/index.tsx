@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Radar } from '@/components/radar';
+import { SlideToStart } from '@/components/slide-to-start';
 import { Spacing } from '@/constants/theme';
 
 // The welcome screen is always dark, regardless of system theme.
@@ -31,16 +32,9 @@ export default function HomeScreen() {
           Create private circles, set your own alerts, and ping family and friends in seconds.
         </Text>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Get Started"
-          onPress={() => router.push('/register')}
-          style={({ pressed }) => [styles.cta, pressed && { opacity: 0.85 }]}>
-          <View style={styles.ctaArrow}>
-            <Text style={styles.ctaArrowText}>→</Text>
-          </View>
-          <Text style={styles.ctaLabel}>Get Started</Text>
-        </Pressable>
+        <View style={styles.cta}>
+          <SlideToStart label="Get Started" color={ACCENT} knobColor={SHEET} onComplete={() => router.push('/register')} />
+        </View>
 
         <Pressable accessibilityRole="link" onPress={() => router.push('/login')} hitSlop={8}>
           <Text style={styles.login}>
@@ -66,28 +60,7 @@ const styles = StyleSheet.create({
   },
   title: { color: '#fff', fontSize: 26, lineHeight: 34, fontWeight: '600', textAlign: 'center' },
   subtitle: { color: '#A3A8B5', fontSize: 15, lineHeight: 22, textAlign: 'center', maxWidth: 340 },
-  cta: {
-    alignSelf: 'stretch',
-    maxWidth: 480,
-    width: '100%',
-    height: 64,
-    marginTop: Spacing.three,
-    borderRadius: 32,
-    backgroundColor: ACCENT,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-  },
-  ctaArrow: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: SHEET,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaArrowText: { color: '#fff', fontSize: 24, lineHeight: 28 },
-  ctaLabel: { flex: 1, textAlign: 'center', color: '#fff', fontSize: 17, fontWeight: '600', marginRight: 54 },
+  cta: { alignSelf: 'stretch', alignItems: 'center', marginTop: Spacing.three },
   login: { color: '#A3A8B5', fontSize: 14 },
   loginLink: { color: '#fff', fontWeight: '600' },
 });

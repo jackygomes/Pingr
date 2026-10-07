@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -176,7 +177,7 @@ export function Radar({ size }: { size: number }) {
 
       <View style={[styles.abs, styles.center, { width: size, height: size }]}>
         <View style={styles.core}>
-          <Text style={styles.coreEmoji}>🚨</Text>
+          <Ionicons name="notifications" size={34} color="#FF8A80" />
         </View>
       </View>
     </View>
@@ -203,5 +204,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  coreEmoji: { fontSize: 36, lineHeight: 44 },
 });
