@@ -1,98 +1,93 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Radar } from '@/components/radar';
+import { Spacing } from '@/constants/theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+// The welcome screen is always dark, regardless of system theme.
+const ACCENT = '#FF5A4F';
+const SHEET = '#11141D';
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const { top, bottom } = useSafeAreaInsets();
+  const radarSize = Math.min(width * 1.05, 480);
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <LinearGradient colors={['#070910', '#1A0F1F', '#3A1620']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <View style={[styles.hero, { paddingTop: top }]}>
+        <Radar size={radarSize} />
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+      <View style={[styles.sheet, { paddingBottom: Math.max(bottom, Spacing.three) + Spacing.three }]}>
+        <Text style={styles.title}>Instant alerts for the people who matter</Text>
+        <Text style={styles.subtitle}>
+          Create private circles, set your own alerts, and ping family and friends in seconds.
+        </Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Get Started"
+          onPress={() => router.push('/register')}
+          style={({ pressed }) => [styles.cta, pressed && { opacity: 0.85 }]}>
+          <View style={styles.ctaArrow}>
+            <Text style={styles.ctaArrowText}>→</Text>
+          </View>
+          <Text style={styles.ctaLabel}>Get Started</Text>
+        </Pressable>
+
+        <Pressable accessibilityRole="link" onPress={() => router.push('/login')} hitSlop={8}>
+          <Text style={styles.login}>
+            Already have an account? <Text style={styles.loginLink}>Log in</Text>
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
+  root: { flex: 1, backgroundColor: '#070910' },
+  hero: { flex: 1, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  sheet: {
+    backgroundColor: SHEET,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: Spacing.five,
     paddingHorizontal: Spacing.four,
     alignItems: 'center',
     gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
+  title: { color: '#fff', fontSize: 26, lineHeight: 34, fontWeight: '600', textAlign: 'center' },
+  subtitle: { color: '#A3A8B5', fontSize: 15, lineHeight: 22, textAlign: 'center', maxWidth: 340 },
+  cta: {
     alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+    maxWidth: 480,
+    width: '100%',
+    height: 64,
+    marginTop: Spacing.three,
+    borderRadius: 32,
+    backgroundColor: ACCENT,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
   },
+  ctaArrow: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: SHEET,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ctaArrowText: { color: '#fff', fontSize: 24, lineHeight: 28 },
+  ctaLabel: { flex: 1, textAlign: 'center', color: '#fff', fontSize: 17, fontWeight: '600', marginRight: 54 },
+  login: { color: '#A3A8B5', fontSize: 14 },
+  loginLink: { color: '#fff', fontWeight: '600' },
 });

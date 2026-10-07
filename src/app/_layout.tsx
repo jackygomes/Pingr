@@ -1,18 +1,36 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { UpdateGate } from '@/lib/app-update/update-gate';
+import { AuthProvider, useAuth } from '@/lib/auth/auth-context';
 
-SplashScreen.preventAutoHideAsync();
+function RootStack() {
+  const { user } = useAuth();
+  const signedIn = Boolean(user);
 
-export default function TabLayout() {
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="login" options={{ headerShown: true, title: '', headerTransparent: true }} />
+        <Stack.Screen name="register" options={{ headerShown: true, title: '', headerTransparent: true }} />
+      </Stack.Protected>
+      <Stack.Protected guard={signedIn}>
+        <Stack.Screen name="circles" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
   const colorScheme = useColorScheme();
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
+      <UpdateGate>
+        <AuthProvider>
+          <RootStack />
+        </AuthProvider>
+      </UpdateGate>
     </ThemeProvider>
   );
 }
